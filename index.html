@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Космическое приключение | Текстовая игра</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #000000;
+            color: #ffffff;
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Космический фон со звездами - теперь основной фон */
+        .space-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(ellipse at center, #0a0a2a 0%, #000000 100%);
+            overflow: hidden;
+        }
+
+        /* Звезды - очень яркие и много */
+        .stars {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(4px 4px at 20px 30px, #ffffff, transparent),
+                radial-gradient(4px 4px at 40px 70px, #ffffff, transparent),
+                radial-gradient(3px 3px at 90px 40px, #ffffff, transparent),
+                radial-gradient(3px 3px at 130px 80px, #ffffff, transparent),
+                radial-gradient(4px 4px at 160px 120px, #ffffff, transparent),
+                radial-gradient(3px 3px at 200px 90px, #ffffff, transparent),
+                radial-gradient(4px 4px at 250px 150px, #ffffff, transparent),
+                radial-gradient(3px 3px at 300px 70px, #ffffff, transparent),
+                radial-gradient(4px 4px at 350px 180px, #ffffff, transparent),
+                radial-gradient(3px 3px at 400px 120px, #ffffff, transparent),
+                radial-gradient(4px 4px at 450px 90px, #ffffff, transparent),
+                radial-gradient(3px 3px at 500px 200px, #ffffff, transparent),
+                radial-gradient(4px 4px at 550px 140px, #ffffff, transparent),
+                radial-gradient(3px 3px at 600px 80px, #ffffff, transparent),
+                radial-gradient(4px 4px at 650px 170px, #ffffff, transparent),
+                radial-gradient(3px 3px at 700px 110px, #ffffff, transparent),
+                radial-gradient(4px 4px at 750px 60px, #ffffff, transparent),
+                radial-gradient(3px 3px at 800px 190px, #ffffff, transparent),
+                radial-gradient(4px 4px at 850px 130px, #ffffff, transparent),
+                radial-gradient(3px 3px at 900px 100px, #ffffff, transparent),
+                radial-gradient(4px 4px at 50px 250px, #ffffff, transparent),
+                radial-gradient(3px 3px at 120px 320px, #ffffff, transparent),
+                radial-gradient(4px 4px at 180px 280px, #ffffff, transparent),
+                radial-gradient(3px 3px at 240px 350px, #ffffff, transparent),
+                radial-gradient(4px 4px at 300px 400px, #ffffff, transparent),
+                radial-gradient(3px 3px at 360px 300px, #ffffff, transparent),
+                radial-gradient(4px 4px at 420px 380px, #ffffff, transparent),
+                radial-gradient(3px 3px at 480px 260px, #ffffff, transparent),
+                radial-gradient(4px 4px at 540px 420px, #ffffff, transparent),
+                radial-gradient(3px 3px at 600px 340px, #ffffff, transparent),
+                radial-gradient(4px 4px at 660px 460px, #ffffff, transparent),
+                radial-gradient(3px 3px at 720px 290px, #ffffff, transparent),
+                radial-gradient(4px 4px at 780px 390px, #ffffff, transparent),
+                radial-gradient(3px 3px at 840px 310px, #ffffff, transparent),
+                radial-gradient(4px 4px at 900px 480px, #ffffff, transparent),
+                radial-gradient(3px 3px at 960px 360px, #ffffff, transparent);
+            background-repeat: repeat;
+            background-size: 1000px 1000px;
+            animation: twinkle 5s infinite alternate;
+            opacity: 0.9;
+        }
+
+        /* Оранжевая планета в центре - очень яркая и большая */
+        .planet {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #ffcc00, #ff6600, #ff3300);
+            box-shadow: 
+                0 0 150px rgba(255, 102, 0, 1),
+                inset 0 0 80px rgba(0, 0, 0, 0.3);
+            z-index: -1;
+            animation: planet-rotate 50s infinite linear;
+            opacity: 0.95;
+        }
+
+        /* Детали на планете */
+        .planet::before {
+            content: '';
+            position: absolute;
+            top: 20%;
+            left: 30%;
+            width: 100px;
+            height: 70px;
+            background-color: rgba(255, 102, 0, 0.9);
+            border-radius: 50%;
+            box-shadow: 
+                80px 100px 0 0 rgba(255, 102, 0, 0.8),
+                160px 180px 0 0 rgba(255, 136, 0, 0.7),
+                220px 70px 0 0 rgba(255, 102, 0, 0.9),
+                300px 260px 0 0 rgba(255, 136, 0, 0.8);
+        }
+
+        /* Космический корабль - очень заметный */
+        .spaceship {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 60px;
+            height: 30px;
+            background: linear-gradient(45deg, #555, #888);
+            border-radius: 15px 5px 5px 15px;
+            transform-origin: center;
+            z-index: 0;
+            animation: orbit 18s infinite linear;
+            box-shadow: 0 0 20px rgba(150, 220, 255, 1);
+            border: 2px solid rgba(180, 230, 255, 0.8);
+        }
+
+        /* Детали корабля */
+        .spaceship::before {
+            content: '';
+            position: absolute;
+            top: 4px;
+            right: -12px;
+            width: 22px;
+            height: 22px;
+            background: radial-gradient(circle, #ffaa00, #ff5500);
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(255, 102, 0, 1);
+        }
+
+        .spaceship::after {
+            content: '';
+            position: absolute;
+            top: 9px;
+            left: 9px;
+            width: 10px;
+            height: 10px;
+            background-color: #00ffff;
+            border-radius: 50%;
+            box-shadow: 
+                15px 0 0 0 #00ffff,
+                30px 0 0 0 #00ffff;
+            animation: blink 1s infinite alternate;
+        }
+
+        /* Контейнер контента - почти полностью прозрачный */
+        .content-wrapper {
+            position: relative;
+            z-index: 1;
+            background-color: rgba(0, 0, 0, 0.2); /* Очень прозрачный */
+            backdrop-filter: blur(1px); /* Минимальное размытие */
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Шапка - почти прозрачная */
+        header {
+            padding: 40px 0 20px;
+            text-align: center;
+            margin-bottom: 50px;
+            background: rgba(0, 0, 10, 0.3); /* Очень прозрачный */
+            border-radius: 0 0 20px 20px;
+            border-bottom: 2px solid rgba(255, 165, 0, 0.5);
+        }
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: #ffcc00;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+            transition: color 0.4s ease;
+            text-shadow: 
+                0 0 25px rgba(255, 204, 0, 1),
+                0 0 50px rgba(255, 102, 0, 0.8);
+        }
+
+        .logo:hover {
+            color: #ffff00;
+            text-shadow: 
+                0 0 30px rgba(255, 255, 0, 1),
+                0 0 60px rgba(255, 153, 0, 0.9);
+        }
+
+        .tagline {
+            font-size: 1.2rem;
+            color: #ffffff;
+            max-width: 600px;
+            margin: 0 auto;
+            text-shadow: 0 0 15px rgba(200, 220, 255, 0.8);
+            font-weight: 300;
+        }
+
+        /* Основной контент - очень прозрачный */
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+
+        .intro-text {
+            flex: 1;
+            min-width: 300px;
+            max-width: 600px;
+            background: rgba(10, 10, 30, 0.3); /* Очень прозрачный */
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 165, 0, 0.4);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .game-images {
+            flex: 1;
+            min-width: 300px;
+            max-width: 600px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2rem;
+            color: #ffcc00;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(255, 165, 0, 0.5);
+            transition: color 0.3s ease;
+            text-shadow: 0 0 20px rgba(255, 204, 0, 0.8);
+        }
+
+        h2:hover {
+            color: #ffff00;
+            text-shadow: 0 0 25px rgba(255, 255, 0, 0.9);
+        }
+
+        p {
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(200, 200, 255, 0.5);
+        }
+
+        .highlight {
+            color: #ffcc00;
+            font-weight: 500;
+            text-shadow: 0 0 15px rgba(255, 204, 0, 0.8);
+        }
+
+        /* Картинки - с прозрачным фоном */
+        .image-container {
+            position: relative;
+            width: 280px;
+            height: 200px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            transition: transform 0.5s ease;
+            border: 2px solid rgba(255, 165, 0, 0.5);
+            background-color: rgba(20, 20, 40, 0.4); /* Прозрачный фон */
+        }
+
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.8s ease;
+        }
+
+        .image-container:hover img {
+            transform: scale(1.1) rotate(2deg);
+        }
+
+        .image-container:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(255, 102, 0, 0.8);
+            border-color: rgba(255, 165, 0, 0.8);
+            background-color: rgba(30, 30, 50, 0.6);
+        }
+
+        .image-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 10, 0.7);
+            color: #ffcc00;
+            padding: 12px;
+            font-family: 'Orbitron', sans-serif;
+            text-align: center;
+            font-weight: 700;
+            text-shadow: 0 0 10px rgba(255, 204, 0, 0.8);
+            letter-spacing: 1px;
+        }
+
+        /* Особенности игры */
+        .features {
+            margin-bottom: 60px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .feature {
+            background: rgba(20, 20, 40, 0.4);
+            padding: 25px;
+            border-radius: 15px;
+            border-left: 5px solid #ff6600;
+            transition: transform 0.3s ease, background 0.3s ease;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 165, 0, 0.3);
+        }
+
+        .feature:hover {
+            transform: translateY(-8px);
+            background: rgba(30, 30, 60, 0.6);
+            box-shadow: 0 15px 35px rgba(255, 102, 0, 0.5);
+            border-color: rgba(255, 165, 0, 0.6);
+        }
+
+        .feature h3 {
+            font-family: 'Orbitron', sans-serif;
+            color: #ffcc00;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            transition: color 0.3s ease;
+            text-shadow: 0 0 15px rgba(255, 204, 0, 0.7);
+        }
+
+        .feature h3:hover {
+            color: #ffff00;
+            text-shadow: 0 0 20px rgba(255, 255, 0, 0.9);
+        }
+
+        /* Призыв к действию */
+        .cta {
+            text-align: center;
+            padding: 60px 20px;
+            background: rgba(20, 20, 40, 0.4);
+            border-radius: 20px;
+            margin-bottom: 60px;
+            border: 2px solid rgba(255, 165, 0, 0.5);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .cta h2 {
+            border: none;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+        }
+
+        .play-button {
+            display: inline-block;
+            background: linear-gradient(45deg, #ff6600, #ffcc00);
+            color: #000000;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            padding: 20px 60px;
+            border-radius: 50px;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 
+                0 10px 25px rgba(255, 102, 0, 0.8),
+                0 0 30px rgba(255, 204, 0, 0.6);
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .play-button:hover {
+            transform: scale(1.08);
+            box-shadow: 
+                0 15px 35px rgba(255, 102, 0, 1),
+                0 0 40px rgba(255, 204, 0, 0.8);
+            background: linear-gradient(45deg, #ff5500, #ffaa00);
+        }
+
+        .play-button::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -60%;
+            width: 20%;
+            height: 200%;
+            background: rgba(255, 255, 255, 0.4);
+            transform: rotate(30deg);
+            transition: all 0.5s ease;
+        }
+
+        .play-button:hover::after {
+            left: 140%;
+        }
+
+        /* Подвал */
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            border-top: 1px solid rgba(255, 165, 0, 0.4);
+            color: #ccccff;
+            font-size: 0.9rem;
+            background-color: rgba(0, 0, 10, 0.3);
+            border-radius: 15px 15px 0 0;
+            margin-top: 40px;
+        }
+
+        /* Анимации */
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+
+        @keyframes planet-rotate {
+            0% { transform: translate(-50%, -50%) rotate(0deg) scale(1); }
+            50% { transform: translate(-50%, -50%) rotate(180deg) scale(1.02); }
+            100% { transform: translate(-50%, -50%) rotate(360deg) scale(1); }
+        }
+
+        @keyframes orbit {
+            0% {
+                transform: translate(-50%, -50%) rotate(0deg) translateX(350px) rotate(0deg) scale(1);
+            }
+            50% {
+                transform: translate(-50%, -50%) rotate(180deg) translateX(350px) rotate(-180deg) scale(1.1);
+            }
+            100% {
+                transform: translate(-50%, -50%) rotate(360deg) translateX(350px) rotate(-360deg) scale(1);
+            }
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        /* Падающие звезды - много и яркие */
+        .shooting-stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .shooting-star {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+            box-shadow: 0 0 20px white;
+            animation: shoot linear infinite;
+        }
+
+        @keyframes shoot {
+            0% {
+                transform: translateY(0) translateX(0);
+                opacity: 0;
+            }
+            5% {
+                opacity: 1;
+            }
+            95% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) translateX(100vw);
+                opacity: 0;
+            }
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 2.5rem;
+            }
+            
+            h2 {
+                font-size: 1.8rem;
+            }
+            
+            .main-content {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .planet {
+                width: 350px;
+                height: 350px;
+            }
+            
+            .spaceship {
+                width: 50px;
+                height: 25px;
+            }
+            
+            @keyframes orbit {
+                0% {
+                    transform: translate(-50%, -50%) rotate(0deg) translateX(250px) rotate(0deg);
+                }
+                100% {
+                    transform: translate(-50%, -50%) rotate(360deg) translateX(250px) rotate(-360deg);
+                }
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Космический фон -->
+    <div class="space-background">
+        <div class="stars"></div>
+        <div class="planet"></div>
+        <div class="spaceship"></div>
+        <div class="shooting-stars" id="shooting-stars"></div>
+    </div>
+    
+    <!-- Контент - почти прозрачный -->
+    <div class="content-wrapper">
+        <div class="container">
+            <header>
+                <h1 class="logo">Космическое приключение</h1>
+                <p class="tagline">Текстовая игра о космонавте, потерпевшем крушение на загадочной пустынной планете. Ваши решения определяют его судьбу.</p>
+            </header>
+
+            <div class="main-content">
+                <div class="intro-text">
+                    <h2>История выживания</h2>
+                    <p>Вы — <span class="highlight">капитан Алексей Воронов</span>, космонавт миссии "Горизонт-7". Ваш корабль потерпел крушение на неизвестной оранжевой планете в системе Kepler-438. Системы жизнеобеспечения повреждены, связь с Землей прервана.</p>
+                    <p>Теперь ваша задача — выжить в этом негостеприимном мире с <span class="highlight">оранжевыми песками</span>, странными скальными образованиями и загадочными артефактами древней цивилизации.</p>
+                    <p>Исследуйте планету, находите ресурсы, принимайте решения, которые будут влиять на развитие сюжета и определять финал истории.</p>
+                </div>
+
+                <div class="game-images">
+                    <div class="image-container">
+                        <img src="images/spaceship-crash.png" alt="Крушение космического корабля">
+                        <div class="image-caption">КРУШЕНИЕ КОРАБЛЯ</div>
+                    </div>
+                    
+                    <div class="image-container">
+                        <img src="images/orange-planet.png" alt="Оранжевая пустынная планета">
+                        <div class="image-caption">ОРАНЖЕВАЯ ПЛАНЕТА</div>
+                    </div>
+                    
+                    <div class="image-container">
+                        <img src="images/survival-kit.png" alt="Набор для выживания">
+                        <div class="image-caption">НАБОР ВЫЖИВАНИЯ</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="features">
+                <h2>Особенности игры</h2>
+                <div class="features-grid">
+                    <div class="feature">
+                        <h3>Динамичный сюжет</h3>
+                        <p>Более 100 различных вариантов развития событий и 5 уникальных концовок в зависимости от ваших решений.</p>
+                    </div>
+                    
+                    <div class="feature">
+                        <h3>Реалистичный мир</h3>
+                        <p>Детально проработанная экосистема оранжевой планеты с уникальной флорой, фауной и погодными явлениями.</p>
+                    </div>
+                    
+                    <div class="feature">
+                        <h3>Система инвентаря</h3>
+                        <p>Собирайте ресурсы, комбинируйте предметы и создавайте инструменты для выживания в суровых условиях.</p>
+                    </div>
+                    
+                    <div class="feature">
+                        <h3>Загадки планеты</h3>
+                        <p>Исследуйте таинственные артефакты древней цивилизации и раскройте секреты оранжевой планеты.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cta">
+                <h2>Начните свое приключение</h2>
+                <p>Примите свою первую судьбоносное решение прямо сейчас. Судьба капитана Воронова в ваших руках!</p>
+                <!-- ВСТАВЛЕНА ССЫЛКА НА ВАШУ ИГРУ -->
+                <a href="https://astrokadet9.github.io/proekt/" class="play-button" target="_blank">Играть бесплатно</a>
+            </div>
+
+            <footer>
+                <p>© 2023 Текстовая игра "Космическое приключение". Все права защищены.</p>
+                <p>Это демонстрационный лендинг для игры. Изображения используются в иллюстративных целях.</p>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        // Добавляем дополнительную интерактивность для заголовков
+        document.addEventListener('DOMContentLoaded', function() {
+            const headings = document.querySelectorAll('h1, h2, h3');
+            
+            headings.forEach(heading => {
+                heading.addEventListener('mouseenter', function() {
+                    this.style.transform = 'scale(1.03)';
+                });
+                
+                heading.addEventListener('mouseleave', function() {
+                    this.style.transform = 'scale(1)';
+                });
+            });
+            
+            // Убрано всплывающее окно и оставлена только ссылка
+            // Кнопка теперь ведет напрямую на вашу игру
+            
+            // Создаем падающие звезды
+            const shootingStarsContainer = document.getElementById('shooting-stars');
+            
+            function createShootingStar() {
+                const star = document.createElement('div');
+                star.className = 'shooting-star';
+                
+                // Случайный размер
+                const size = Math.random() * 4 + 2;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                
+                // Случайная начальная позиция
+                star.style.left = `${Math.random() * 100}vw`;
+                star.style.top = `${Math.random() * 50}vh`;
+                
+                // Случайная длительность анимации
+                const duration = Math.random() * 1.5 + 0.5;
+                star.style.animationDuration = `${duration}s`;
+                
+                // Случайная задержка
+                const delay = Math.random() * 3;
+                star.style.animationDelay = `${delay}s`;
+                
+                shootingStarsContainer.appendChild(star);
+                
+                // Удаляем звезду после завершения анимации
+                setTimeout(() => {
+                    if (star.parentNode) {
+                        star.parentNode.removeChild(star);
+                    }
+                }, (duration + delay) * 1000);
+            }
+            
+            // Создаем много падающих звезд
+            for (let i = 0; i < 30; i++) {
+                createShootingStar();
+            }
+            
+            // Периодически добавляем новые звезды
+            setInterval(createShootingStar, 1000);
+            
+            // Параллакс-эффект при движении мыши
+            const planet = document.querySelector('.planet');
+            const spaceship = document.querySelector('.spaceship');
+            
+            document.addEventListener('mousemove', function(e) {
+                const x = e.clientX / window.innerWidth - 0.5;
+                const y = e.clientY / window.innerHeight - 0.5;
+                
+                // Движение звездного фона
+                document.querySelector('.stars').style.transform = `translate(${x * 30}px, ${y * 30}px)`;
+                
+                // Смещение планеты
+                planet.style.transform = `translate(calc(-50% + ${x * 40}px), calc(-50% + ${y * 40}px))`;
+            });
+        });
+    </script>
+</body>
+</html>
